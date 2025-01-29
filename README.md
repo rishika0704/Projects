@@ -4,11 +4,13 @@
 In this there are:
 - Data Folder : This has the data for IMDB Movie 
 - Reviews and the data is from kaggle. 
-- Baseline Model : This ipynb file contains the code from database setup to baseline (logistic model) creation. 
+- Baseline Model : This ipynb file contains the code from database setup to baseline (logistic model) 
+                   creation. 
 - imdb.db : It is the sqlite database. 
 - logistic_model.pkl : Pickle file for logistic regression model. 
 - app.py : Flask api for the prediction
-- Sentiment Analysis - Bert: This is ipynb file for bert classification,  I have not uploaded the models since the files were quite huge and github didn't support.
+- Sentiment Analysis - Bert: This is ipynb file for bert classification, I have not uploaded the 
+                             models since the files were quite huge and github didn't support.
                              The whole code in this file is on GPU, because CPU was taking very long time (used Google Colab)
 - vectorizer.pkl : Pickle file for vectors.
 -requirements.txt : All the requirements 
@@ -54,14 +56,16 @@ curl -X POST http://127.0.0.1:5000/predict \
 ```
 In this there are:
 - templates : Html files
-- uploads : Folder for storing the pdf's user uploads (this has a pdf file for testing the RAG in app.py)
+- uploads : Folder for storing the pdf's user uploads 
+            (this has a pdf file for testing the RAG in app.py)
 - app.py : Flask api for running the RAG (here, i am using chroma and gemini api)
 - chat_history.db - sqlite db for storing the chat history
 - rag.py - Contains the RAG model
-- RAG - ollama & pinecone.ipynb : This is a ipynb file where i am using ollama and pinecone (vector database) for creating a RAG 
-                                  model. The code is running on GPU so used google colab. 
-- Recipes.py : This is the pdf file which i used for creating a RAG model in "RAG - ollama & pinecone.ipynb". The data is getting 
-               stored in pinecone vector database.
+- RAG - ollama & pinecone.ipynb : This is a ipynb file where i am using ollama and pinecone 
+        (vector database) for creating a RAG model. The code is running on GPU so used google colab. 
+- Recipes.py : This is the pdf file which i used for creating a RAG model in 
+               "RAG - ollama & pinecone.ipynb". The data is getting stored in 
+               pinecone vector database.
 -requirements.txt : All the requirements 
 
 ```
@@ -110,4 +114,4 @@ curl -X POST http://127.0.0.1:5000/generate_chat_response \
 ```bash
 curl -X GET http://127.0.0.1:5000/history
 ```
-You can go directly to the http://127.0.0.1:5000 and test the function after running app.py
+You can go directly to the http://127.0.0.1:5000 and test after running app.py
