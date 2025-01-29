@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot PDF Upload</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-k6RqeWeci5ZR/Lv4MR0sA0FfDOMj0K4OfbV1Rm/RZrI1i91soS0xdk+7Kr5m5eNQoG2H1h5Mff8uV90DVOJkA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        #chat-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+        #chat-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 400px;
+            overflow-y: auto;
+            background-color: #fafafa;
+            border-radius: 10px 10px 0 0;
+        }
+        .user-message {
+            text-align: right;
+            margin: 5px;
+            color: blue;
+            background-color: #e1f5fe;
+            padding: 8px;
+            border-radius: 8px;
+            max-width: 80%;
+            display: inline-block;
+            position: relative;
+            margin-left: auto;
+        }
+        .bot-response {
+            text-align: left;
+            margin: 5px;
+            color: green;
+            background-color: #f1f8e9;
+            padding: 8px;
+            border-radius: 8px;
+            max-width: 80%;
+            display: inline-block;
+            position: relative;
+        }
+        #form-container {
+            display: flex;
+            border-top: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+        }
+        #form-container input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        #form-container button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #form-container button:hover {
+            background-color: #0056b3;
+        }
+        #upload-container {
+            display: flex;
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+        #upload-container input[type="file"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        #upload-container button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #upload-container button:hover {
+            background-color: #218838;
+        }
+        /* Scrollbar styling */
+        #chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        #chat-box::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 4px;
+        }
+        #chat-box::-webkit-scrollbar-thumb:hover {
+            background-color: #aaa;
+        }
+    </style>
+    <script>
+        let pdfUploaded = false;
+        let pdfPath = '';
+
+        async function uploadFile(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('/upload_pdf', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.error) {
+                alert(result.error);
+            } else {
+                pdfUploaded = true;
+                pdfPath = result.path;  // Store the path of the uploaded PDF
+                document.getElementById('chat-box').innerHTML += 
+                    `<div class="bot-response">PDF uploaded successfully. You can start asking questions.</div>`;
+            }
+        }
+
+        async function submitQuestion(event) {
+            event.preventDefault();
+            if (!pdfUploaded) {
+                alert("Please upload a PDF first!");
+                return;
+            }
+
+            const prompt = document.getElementById('question-input').value;
+
+            const response = await fetch('/generate_chat_response', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    prompt: prompt,
+                    pdf_path: pdfPath  // Send the PDF path along with the prompt
+                })
+            });
+
+            const result = await response.json();
+
+            document.getElementById('chat-box').innerHTML += 
+                `<div class="user-message">You: ${prompt}</div>`;
+            if (result.chatbot_response) {
+                document.getElementById('chat-box').innerHTML += 
+                    `<div class="bot-response">Bot: ${result.chatbot_response}</div>`;
+            } else {
+                document.getElementById('chat-box').innerHTML += 
+                    `<div class="bot-response">Bot: ${result.error}</div>`;
+            }
+
+            // Clear the input after submission
+            document.getElementById('question-input').value = '';
+            // Scroll to the bottom of the chat box
+            document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+        }
+    </script>
+</head>
+<body>
+    <h1>Chatbot PDF Upload</h1>
+    
+    <div id="upload-container">
+        <form id="upload-form" onsubmit="uploadFile(event)" style="display: flex; width: 100%;">
+            <input type="file" name="pdf_file" accept=".pdf" required>
+            <button type="submit"><i class="fas fa-upload"></i> Upload PDF</button>
+        </form>
+    </div>
+
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <div id="form-container">
+            <input type="text" id="question-input" placeholder="Ask your question..." required>
+            <button onclick="submitQuestion(event)"><i class="fas fa-paper-plane"></i> Send</button>
+        </div>
+    </div>
+</body>
+</html>
