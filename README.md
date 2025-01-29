@@ -25,7 +25,7 @@ git clone https://github.com/rishika0704/Projects.git
 ```
 Go to Assignment 1 folder
 ```bash
-cd "Assignment 1"
+cd "Projects\Assignment 1"
 ```
 Create a virtual environment 
 ```bash
@@ -45,7 +45,7 @@ pip install -r requirements.txt
 python app.py
 ```
 ### Testing using the terminal 
-Below is for bash
+Open new terminal (bash)
 ```bash
 curl -X POST http://127.0.0.1:5000/predict \
 -H "Content-Type: application/json" \
@@ -77,7 +77,7 @@ git clone https://github.com/rishika0704/Projects.git
 ```
 Go to Assignment 1 folder
 ```bash
-cd "Assignment 2"
+cd "Projects\Assignment 2"
 ```
 Create a virtual environment 
 ```bash
@@ -97,19 +97,21 @@ pip install -r requirements.txt
 python app.py
 ```
 ### Testing using the terminal 
-Below is for bash
+All the below command are for bash
 #### Uploading the file
 ```bash
 curl -X POST http://127.0.0.1:5000/upload_pdf \
 -H "Content-Type: multipart/form-data" \
 -F "pdf_file=@/path/to/your/file.pdf"
 ```
+mention the pdf path after '@'
 #### Generating Chat Response
 ```bash 
 curl -X POST http://127.0.0.1:5000/generate_chat_response \
 -H "Content-Type: application/x-www-form-urlencoded" \
 -d "prompt=What is neurons?&pdf_path=/path/to/uploaded/file.pdf"
 ```
+here, change pdf_path to path of 'ComponentsofNN.pdf in your uploads folder'
 #### Retrieve Chat History 
 ```bash
 curl -X GET http://127.0.0.1:5000/history
